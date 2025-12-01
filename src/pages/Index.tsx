@@ -1,26 +1,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Icon from '@/components/ui/icon';
+import Navigation from '@/components/Navigation';
+import VarietiesCatalog from '@/components/VarietiesCatalog';
+import AboutAndCare from '@/components/AboutAndCare';
+import ContactSection from '@/components/ContactSection';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
-  const [filterType, setFilterType] = useState('all');
-  const [selectedVarieties, setSelectedVarieties] = useState<number[]>([]);
-  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
 
   const varieties = [
     {
       id: 1,
       name: 'Кишмиш Лучистый',
-      type: 'grape',
+      type: 'grape' as const,
       image: '🍇',
       description: 'Среднеспелый бессемянный сорт с крупными розовыми ягодами',
       characteristics: {
@@ -33,7 +26,7 @@ const Index = () => {
     {
       id: 2,
       name: 'Аркадия',
-      type: 'grape',
+      type: 'grape' as const,
       image: '🍇',
       description: 'Ранний столовый сорт с крупными белыми ягодами',
       characteristics: {
@@ -46,7 +39,7 @@ const Index = () => {
     {
       id: 3,
       name: 'Антоновка',
-      type: 'apple',
+      type: 'apple' as const,
       image: '🍏',
       description: 'Старинный русский сорт с кисло-сладкими ароматными плодами',
       characteristics: {
@@ -59,7 +52,7 @@ const Index = () => {
     {
       id: 4,
       name: 'Мельба',
-      type: 'apple',
+      type: 'apple' as const,
       image: '🍎',
       description: 'Летний сорт с красивыми красно-полосатыми плодами',
       characteristics: {
@@ -72,7 +65,7 @@ const Index = () => {
     {
       id: 5,
       name: 'Молдова',
-      type: 'grape',
+      type: 'grape' as const,
       image: '🍇',
       description: 'Поздний сорт с темно-фиолетовыми крупными ягодами',
       characteristics: {
@@ -85,7 +78,7 @@ const Index = () => {
     {
       id: 6,
       name: 'Белый налив',
-      type: 'apple',
+      type: 'apple' as const,
       image: '🍏',
       description: 'Ранний летний сорт с нежной белой мякотью',
       characteristics: {
@@ -96,23 +89,6 @@ const Index = () => {
       }
     }
   ];
-
-  const filteredVarieties = filterType === 'all' 
-    ? varieties 
-    : varieties.filter(v => v.type === filterType);
-
-  const toggleVarietySelection = (id: number) => {
-    setSelectedVarieties(prev => 
-      prev.includes(id) 
-        ? prev.filter(vid => vid !== id)
-        : [...prev, id]
-    );
-  };
-
-  const selectedVarietiesData = varieties.filter(v => selectedVarieties.includes(v.id));
-  const allCharacteristicKeys = selectedVarietiesData.length > 0
-    ? Object.keys(selectedVarietiesData[0].characteristics)
-    : [];
 
   const galleryImages = [
     { id: 1, emoji: '🍇', alt: 'Виноградная лоза' },
@@ -131,36 +107,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🍇</span>
-              <h1 className="text-2xl font-bold text-primary">Садовод</h1>
-            </div>
-            <div className="hidden md:flex items-center gap-6">
-              <button onClick={() => scrollToSection('home')} className="text-sm font-medium hover:text-primary transition-colors">
-                Главная
-              </button>
-              <button onClick={() => scrollToSection('varieties')} className="text-sm font-medium hover:text-primary transition-colors">
-                Сорта
-              </button>
-              <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors">
-                Галерея
-              </button>
-              <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors">
-                О культурах
-              </button>
-              <button onClick={() => scrollToSection('care')} className="text-sm font-medium hover:text-primary transition-colors">
-                Уход
-              </button>
-              <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors">
-                Контакты
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation scrollToSection={scrollToSection} />
 
       <section id="home" className="py-20 bg-gradient-to-b from-accent to-background">
         <div className="container mx-auto px-4">
@@ -184,147 +131,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="varieties" className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-4">Каталог сортов</h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Подборка проверенных сортов винограда и яблок с подробными характеристиками
-          </p>
-
-          <div className="flex flex-col items-center gap-4 mb-12">
-            <div className="flex justify-center gap-4">
-              <Button 
-                variant={filterType === 'all' ? 'default' : 'outline'}
-                onClick={() => setFilterType('all')}
-                className="gap-2"
-              >
-                <Icon name="List" size={18} />
-                Все сорта
-              </Button>
-              <Button 
-                variant={filterType === 'grape' ? 'default' : 'outline'}
-                onClick={() => setFilterType('grape')}
-                className="gap-2"
-              >
-                🍇 Виноград
-              </Button>
-              <Button 
-                variant={filterType === 'apple' ? 'default' : 'outline'}
-                onClick={() => setFilterType('apple')}
-                className="gap-2"
-              >
-                🍎 Яблоки
-              </Button>
-            </div>
-            
-            {selectedVarieties.length > 0 && (
-              <Dialog open={compareDialogOpen} onOpenChange={setCompareDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="default" className="gap-2">
-                    <Icon name="GitCompare" size={18} />
-                    Сравнить выбранные ({selectedVarieties.length})
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Сравнение сортов</DialogTitle>
-                    <DialogDescription>
-                      Сравните характеристики выбранных сортов
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="mt-4">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[200px]">Характеристика</TableHead>
-                          {selectedVarietiesData.map(variety => (
-                            <TableHead key={variety.id} className="text-center">
-                              <div className="flex flex-col items-center gap-2">
-                                <span className="text-3xl">{variety.image}</span>
-                                <span className="font-semibold">{variety.name}</span>
-                                <Badge variant="secondary" className="text-xs">
-                                  {variety.type === 'grape' ? 'Виноград' : 'Яблоко'}
-                                </Badge>
-                              </div>
-                            </TableHead>
-                          ))}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell className="font-medium">Описание</TableCell>
-                          {selectedVarietiesData.map(variety => (
-                            <TableCell key={variety.id} className="text-sm text-center">
-                              {variety.description}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                        {allCharacteristicKeys.map(key => (
-                          <TableRow key={key}>
-                            <TableCell className="font-medium">{key}</TableCell>
-                            {selectedVarietiesData.map(variety => (
-                              <TableCell key={variety.id} className="text-center">
-                                {variety.characteristics[key]}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setSelectedVarieties([])}
-                    >
-                      Очистить выбор
-                    </Button>
-                    <Button onClick={() => setCompareDialogOpen(false)}>
-                      Закрыть
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredVarieties.map((variety) => (
-              <Card key={variety.id} className="hover:shadow-lg transition-shadow relative">
-                <div className="absolute top-4 right-4 z-10">
-                  <Checkbox 
-                    checked={selectedVarieties.includes(variety.id)}
-                    onCheckedChange={() => toggleVarietySelection(variety.id)}
-                    className="h-5 w-5"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="text-6xl mb-4 text-center">{variety.image}</div>
-                  <CardTitle className="text-center">{variety.name}</CardTitle>
-                  <CardDescription className="text-center">
-                    <Badge variant="secondary" className="mt-2">
-                      {variety.type === 'grape' ? 'Виноград' : 'Яблоко'}
-                    </Badge>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {variety.description}
-                  </p>
-                  <div className="space-y-2">
-                    {Object.entries(variety.characteristics).map(([key, value]) => (
-                      <div key={key} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{key}:</span>
-                        <span className="font-medium">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <VarietiesCatalog varieties={varieties} />
 
       <section id="gallery" className="py-20 bg-accent/30">
         <div className="container mx-auto px-4">
@@ -345,214 +152,9 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="about" className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">О культурах</h2>
-          <div className="max-w-4xl mx-auto">
-            <Tabs defaultValue="grape" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="grape" className="gap-2">
-                  🍇 Виноград
-                </TabsTrigger>
-                <TabsTrigger value="apple" className="gap-2">
-                  🍎 Яблоки
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="grape">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Виноград в саду</CardTitle>
-                    <CardDescription>
-                      Универсальная культура для любого участка
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p>
-                      Виноград — одна из древнейших культур, выращиваемых человеком. 
-                      Современные сорта адаптированы к различным климатическим условиям 
-                      и могут успешно плодоносить даже в средней полосе России.
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold flex items-center gap-2">
-                          <Icon name="Sun" size={18} className="text-primary" />
-                          Преимущества
-                        </h4>
-                        <ul className="text-sm space-y-1 text-muted-foreground ml-6">
-                          <li>• Высокая урожайность</li>
-                          <li>• Декоративность лозы</li>
-                          <li>• Разнообразие сортов</li>
-                          <li>• Долгий срок плодоношения</li>
-                        </ul>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold flex items-center gap-2">
-                          <Icon name="Sprout" size={18} className="text-primary" />
-                          Условия выращивания
-                        </h4>
-                        <ul className="text-sm space-y-1 text-muted-foreground ml-6">
-                          <li>• Солнечное место</li>
-                          <li>• Защита от ветра</li>
-                          <li>• Хороший дренаж</li>
-                          <li>• Опора для лозы</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="apple">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Яблони в саду</CardTitle>
-                    <CardDescription>
-                      Основа плодового сада
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p>
-                      Яблоня — самая распространенная плодовая культура в России. 
-                      Неприхотливость, высокая зимостойкость и разнообразие сортов 
-                      делают яблоню идеальной для любого сада.
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold flex items-center gap-2">
-                          <Icon name="Award" size={18} className="text-primary" />
-                          Преимущества
-                        </h4>
-                        <ul className="text-sm space-y-1 text-muted-foreground ml-6">
-                          <li>• Высокая морозостойкость</li>
-                          <li>• Долговечность деревьев</li>
-                          <li>• Лежкость плодов</li>
-                          <li>• Универсальность использования</li>
-                        </ul>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold flex items-center gap-2">
-                          <Icon name="TreeDeciduous" size={18} className="text-primary" />
-                          Условия выращивания
-                        </h4>
-                        <ul className="text-sm space-y-1 text-muted-foreground ml-6">
-                          <li>• Открытое место</li>
-                          <li>• Умеренный полив</li>
-                          <li>• Регулярная обрезка</li>
-                          <li>• Профилактика болезней</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
-      </section>
+      <AboutAndCare />
 
-      <section id="care" className="py-20 bg-accent/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-4">Уход за растениями</h2>
-          <p className="text-center text-muted-foreground mb-12">
-            Основные агротехнические приемы
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <Card className="text-center">
-              <CardHeader>
-                <div className="text-4xl mb-2 mx-auto">
-                  <Icon name="Droplets" size={48} className="text-primary mx-auto" />
-                </div>
-                <CardTitle className="text-lg">Полив</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Регулярный полив в период роста и созревания. Особенно важен в засушливые периоды.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="text-4xl mb-2">
-                  <Icon name="Scissors" size={48} className="text-primary mx-auto" />
-                </div>
-                <CardTitle className="text-lg">Обрезка</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Формирующая и санитарная обрезка для правильного развития и урожайности.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="text-4xl mb-2">
-                  <Icon name="Leaf" size={48} className="text-primary mx-auto" />
-                </div>
-                <CardTitle className="text-lg">Подкормка</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Внесение органических и минеральных удобрений весной и осенью.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="text-4xl mb-2">
-                  <Icon name="Shield" size={48} className="text-primary mx-auto" />
-                </div>
-                <CardTitle className="text-lg">Защита</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Профилактическая обработка от болезней и вредителей в течение сезона.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-4">Контакты</h2>
-            <p className="text-center text-muted-foreground mb-12">
-              Есть вопросы? Свяжитесь со мной
-            </p>
-            <Card>
-              <CardHeader>
-                <CardTitle>Написать сообщение</CardTitle>
-                <CardDescription>
-                  Отвечу на любые вопросы о выращивании винограда и яблок
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Имя</label>
-                    <Input placeholder="Ваше имя" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input type="email" placeholder="your@email.com" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Сообщение</label>
-                    <Textarea placeholder="Ваш вопрос или сообщение..." rows={5} />
-                  </div>
-                  <Button type="submit" className="w-full gap-2">
-                    <Icon name="Send" size={18} />
-                    Отправить сообщение
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      <ContactSection />
 
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container mx-auto px-4 text-center">
